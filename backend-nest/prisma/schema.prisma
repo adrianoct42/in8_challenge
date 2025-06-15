@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model ProductNational {
+  id                Int @default(autoincrement()) @id
+  nome              String
+  descricao         String
+  categoria         String
+  imagem            String
+  preco             Decimal @db.Decimal(10, 2)
+  material          String
+  departamento      String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model ProductInter {
+  id                Int @id @default(autoincrement())
+  name              String
+  description       String
+  price             Decimal @db.Decimal(10, 2)
+  discountValue     Decimal @db.Decimal(5, 2)
+  hasDiscount       Boolean
+  gallery           Json 
+  details           Json
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
