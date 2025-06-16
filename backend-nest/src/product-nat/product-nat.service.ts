@@ -19,6 +19,10 @@ export class ProductNatService {
     }
   }
 
+  async getNatPurchased() {
+    return this.prisma.productNational.findMany();
+  }
+
   async addCart(dto: CreateProductNationalDto) {
     return this.prisma.productNational.create({
       data: {

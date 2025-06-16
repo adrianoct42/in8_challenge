@@ -21,6 +21,10 @@ export class ProductIntService {
     }
   }
 
+  async getIntPurchased() {
+    return this.prisma.productInter.findMany();
+  }
+
   async addCart(dto: CreateProductInterDto) {
     return this.prisma.productInter.create({
       data: {

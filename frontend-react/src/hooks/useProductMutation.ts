@@ -6,7 +6,7 @@ export function useProductMutation() {
   const { mutate: purchaseItems, isPending: isPurchasing } = useMutation({
     mutationFn: purchaseCart,
     onSuccess: () => {
-      toast.success("Items comprados com successo! Obrigado!");
+      toast.success("Itens comprados com sucesso! Obrigado!");
       localStorage.clear();
     },
   });

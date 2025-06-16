@@ -7,6 +7,11 @@ import { ProductNational } from '@prisma/client';
 export class ProductNatController {
   constructor(private readonly productNatService: ProductNatService) {}
 
+  @Get('purchased-nat')
+  async getNatPurchased() {
+    return this.productNatService.getNatPurchased();
+  }
+
   @Get('all')
   async getNatProducts() {
     return this.productNatService.getNatProducts();

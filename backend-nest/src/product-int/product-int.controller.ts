@@ -7,6 +7,11 @@ import { ProductInter } from '@prisma/client';
 export class ProductIntController {
   constructor(private readonly productIntService: ProductIntService) {}
 
+  @Get('purchased-int')
+  async getIntPurchased() {
+    return this.productIntService.getIntPurchased();
+  }
+
   @Get('all')
   async getIntProducts() {
     return this.productIntService.getIntProducts();

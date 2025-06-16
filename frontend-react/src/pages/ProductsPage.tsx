@@ -5,20 +5,21 @@ import { useProductsAll } from "../hooks/useProductsAll";
 import { useProductsInt } from "../hooks/useProductsInt";
 import toast from "react-hot-toast";
 import type { IntProdType, NatProdType } from "../types/types";
+import Sidebar from "../components/Sidebar";
 
 type ProductType = NatProdType | IntProdType;
 
-function ProductsPage() {
+export default function ProductsPage() {
   const { productsNat, isLoadingNat } = useProductsNat();
   const { productsInt, isLoadingInt } = useProductsInt();
   const { productsAll, isLoadingAll } = useProductsAll();
   const [products, setProducts] = useState<ProductType[]>([]);
-  const [selected, setSelected] = useState("All");
+  const [selected, setSelected] = useState("Todos");
 
   useEffect(() => {
-    if (selected === "All") {
+    if (selected === "Todos") {
       setProducts(productsAll ?? []);
-    } else if (selected === "National") {
+    } else if (selected === "Nacional") {
       setProducts(productsNat?.data ?? []);
     } else {
       setProducts(productsInt?.data ?? []);
@@ -31,7 +32,7 @@ function ProductsPage() {
     setProducts,
   ]);
 
-  const buttons = ["All", "National", "International"];
+  const buttons = ["Todos", "Nacional", "Internacional"];
 
   function handleCartAdd(cartItem: object): void {
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -42,18 +43,19 @@ function ProductsPage() {
 
   return (
     <>
-      <div className="flex justify-end w-full mt-8 px-4">
+      <Sidebar />
+      <div className="flex items-center w-full mt-8 px-4">
         <p className="text-2xl flex justify-center w-full m-0 p-0">
           Bem vindo a página de Produtos! Adicione itens no carrinho clicando no
           ícone no card!
         </p>
         <div className="flex-shrink-0">
-          <div className="inline-flex rounded-full overflow-hidden border border-blue-600">
+          <div className="inline-flex rounded-full overflow-hidden border-2 border-blue-600">
             {buttons.map((label) => (
               <button
                 key={label}
                 onClick={() => setSelected(label)}
-                className={`px-6 py-2 text-sm font-medium transition-colors
+                className={`text-sm px-6 py-2  font-medium transition-colors
             ${
               selected === label
                 ? "bg-blue-600 text-white"
@@ -71,14 +73,14 @@ function ProductsPage() {
         {!isLoadingAll &&
           !isLoadingNat &&
           !isLoadingInt &&
-          products.map((prod, idx) => {
+          products.map((prod, index) => {
             if ("nome" in prod && "preco" in prod && "imagem" in prod) {
               return (
                 <ProductCard
-                  key={`nat-${idx}`}
+                  key={`nat-${index}`}
                   nome={prod.nome}
                   preco={prod.preco}
-                  imagem={"./public/placeholder.png"}
+                  imagem={prod.imagem}
                   handleCart={() => handleCartAdd(prod)}
                 />
               );
@@ -87,20 +89,16 @@ function ProductsPage() {
             if ("name" in prod && "price" in prod && "gallery" in prod) {
               return (
                 <ProductCard
-                  key={`int-${idx}`}
+                  key={`int-${index}`}
                   nome={prod.name}
                   preco={prod.price}
-                  imagem={"./public/placeholder.png"}
+                  imagem={prod.gallery[0]}
                   handleCart={() => handleCartAdd(prod)}
                 />
               );
             }
-
-            return null;
           })}
       </div>
     </>
   );
 }
-
-export default ProductsPage;

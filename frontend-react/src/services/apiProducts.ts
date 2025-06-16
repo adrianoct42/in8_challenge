@@ -22,6 +22,15 @@ export async function getAllProducts() {
   return [...productsNat.data, ...productsInt.data];
 }
 
+export async function getAllPurchased() {
+  const [productsNat, productsInt] = await Promise.all([
+    axios.get("product-nat/purchased-nat"),
+    axios.get("product-int/purchased-int"),
+  ]);
+
+  return [...productsNat.data, ...productsInt.data];
+}
+
 export async function purchaseCart() {
   const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
   cartItems.map((item: NatProdType | IntProdType) => {
