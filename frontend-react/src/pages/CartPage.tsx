@@ -3,7 +3,6 @@ import type { NatProdType, IntProdType } from "../types/types";
 import { useProductMutation } from "../hooks/useProductMutation";
 import FloatingButton from "../components/FloatingButton";
 import { BsFillCartCheckFill } from "react-icons/bs";
-import Sidebar from "../components/Sidebar";
 import CartListItem from "../components/CartListItem";
 
 export default function CartPage() {
@@ -21,7 +20,6 @@ export default function CartPage() {
 
   return (
     <>
-      <Sidebar />
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col w-full my-8 px-4">
           <p className="text-2xl flex justify-center m-0 p-0">

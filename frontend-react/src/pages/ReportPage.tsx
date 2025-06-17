@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Sidebar from "../components/Sidebar";
 import type { IntProdType, NatProdType } from "../types/types";
 import CartListItem from "../components/CartListItem";
 import { useProductsPurchased } from "../hooks/useProductsPruchased";
@@ -17,7 +16,6 @@ export default function ReportPage() {
 
   return (
     <>
-      <Sidebar />
       <div className="flex flex-col w-full my-8 px-4">
         <p className="text-2xl flex justify-center m-0 p-0">
           Esses são seus itens já comprados:

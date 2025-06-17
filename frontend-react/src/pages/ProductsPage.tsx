@@ -5,7 +5,6 @@ import { useProductsAll } from "../hooks/useProductsAll";
 import { useProductsInt } from "../hooks/useProductsInt";
 import toast from "react-hot-toast";
 import type { IntProdType, NatProdType } from "../types/types";
-import Sidebar from "../components/Sidebar";
 
 type ProductType = NatProdType | IntProdType;
 
@@ -13,21 +12,40 @@ export default function ProductsPage() {
   const { productsNat, isLoadingNat } = useProductsNat();
   const { productsInt, isLoadingInt } = useProductsInt();
   const { productsAll, isLoadingAll } = useProductsAll();
+  const [search, setSearch] = useState("");
+  const [, setOriginalProducts] = useState<ProductType[]>([]);
   const [products, setProducts] = useState<ProductType[]>([]);
   const [selected, setSelected] = useState("Todos");
 
   useEffect(() => {
+    let baseProducts: ProductType[] = [];
+
     if (selected === "Todos") {
-      setProducts(productsAll ?? []);
+      baseProducts = productsAll ?? [];
     } else if (selected === "Nacional") {
-      setProducts(productsNat?.data ?? []);
+      baseProducts = productsNat?.data ?? [];
     } else {
-      setProducts(productsInt?.data ?? []);
+      baseProducts = productsInt?.data ?? [];
     }
+
+    // Salva os produtos de acordo com o filtro:
+    setOriginalProducts(baseProducts);
+
+    // Se digitou algo, filtra pela digitação e busca pelo campo NOME/NAME
+    // Se nada foi digitado, retorna simplesmente os produtos originais.
+    setProducts(
+      search.length > 0
+        ? baseProducts.filter((p) => {
+            const name = "nome" in p ? p.nome : p.name;
+            return name.toLowerCase().includes(search.toLowerCase());
+          })
+        : baseProducts
+    );
   }, [
     productsAll,
     productsInt?.data,
     productsNat?.data,
+    search,
     selected,
     setProducts,
   ]);
@@ -41,21 +59,27 @@ export default function ProductsPage() {
     toast.success("Item adicionado no carrinho!");
   }
 
+  function getRandomIndex(): number {
+    return Math.floor(Math.random() * 4);
+  }
+
   return (
     <>
-      <Sidebar />
       <div className="flex items-center w-full mt-8 px-4">
         <p className="text-2xl flex justify-center w-full m-0 p-0">
           Bem vindo a página de Produtos! Adicione itens no carrinho clicando no
           ícone no card!
         </p>
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 py-2">
           <div className="inline-flex rounded-full overflow-hidden border-2 border-blue-600">
             {buttons.map((label) => (
               <button
                 key={label}
-                onClick={() => setSelected(label)}
-                className={`text-sm px-6 py-2  font-medium transition-colors
+                onClick={() => {
+                  setSelected(label);
+                  setSearch("");
+                }}
+                className={`text-sm px-6 py-2 font-medium transition-colors
             ${
               selected === label
                 ? "bg-blue-600 text-white"
@@ -66,6 +90,15 @@ export default function ProductsPage() {
                 {label}
               </button>
             ))}
+          </div>
+          <div className="flex justify-center mt-6">
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar produto..."
+              className="px-4 py-2 w-72 border-2 border-blue-600 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
           </div>
         </div>
       </div>
@@ -92,7 +125,7 @@ export default function ProductsPage() {
                   key={`int-${index}`}
                   nome={prod.name}
                   preco={prod.price}
-                  imagem={prod.gallery[0]}
+                  imagem={prod.gallery[getRandomIndex()]}
                   handleCart={() => handleCartAdd(prod)}
                 />
               );

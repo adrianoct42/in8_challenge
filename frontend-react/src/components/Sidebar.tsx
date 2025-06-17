@@ -3,7 +3,7 @@ import { FaHome, FaShoppingCart, FaBook } from "react-icons/fa";
 
 export default function Sidebar() {
   return (
-    <div className="fixed top-0 left-0 h-full w-64 bg-blue-800 text-white shadow-lg flex flex-col">
+    <div className="h-full w-64 bg-blue-800 text-white shadow-lg flex flex-col">
       <div className="p-6 text-2xl font-bold border-b border-blue-700">
         Navegação
       </div>
