@@ -23,7 +23,7 @@ class NatProdDto {
       descricao: json['descricao'],
       categoria: json['categoria'],
       imagem: json['imagem'],
-      preco: (json['preco'] as num).toDouble(),
+      preco: double.parse(json['preco'].toString()),
       material: json['material'],
       departamento: json['departamento'],
     );
@@ -35,7 +35,7 @@ class NatProdDto {
       'descricao': descricao,
       'categoria': categoria,
       'imagem': imagem,
-      'preco': preco,
+      'preco': preco.toString(),
       'material': material,
       'departamento': departamento,
     };

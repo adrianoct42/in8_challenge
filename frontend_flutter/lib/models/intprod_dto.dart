@@ -1,7 +1,6 @@
 class IntProdDto {
   final String name;
   final String description;
-  final String categoria;
   final List<String> gallery;
   final double price;
   final double discountValue;
@@ -11,7 +10,6 @@ class IntProdDto {
   IntProdDto({
     required this.name,
     required this.description,
-    required this.categoria,
     required this.gallery,
     required this.price,
     required this.discountValue,
@@ -23,10 +21,9 @@ class IntProdDto {
     return IntProdDto(
       name: json['name'],
       description: json['description'],
-      categoria: json['categoria'],
       gallery: List<String>.from(json['gallery']),
-      price: (json['price'] as num).toDouble(),
-      discountValue: (json['discountValue'] as num).toDouble(),
+      price: double.parse(json['price'].toString()),
+      discountValue: double.parse(json['discountValue'].toString()),
       hasDiscount: json['hasDiscount'],
       details: Map<String, dynamic>.from(json['details']),
     );
@@ -36,10 +33,9 @@ class IntProdDto {
     return {
       'name': name,
       'description': description,
-      'categoria': categoria,
       'gallery': gallery,
-      'price': price,
-      'discountValue': discountValue,
+      'price': price.toString(),
+      'discountValue': discountValue.toString(),
       'hasDiscount': hasDiscount,
       'details': details,
     };

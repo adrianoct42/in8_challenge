@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:frontend_flutter/models/intprod_dto.dart';
 import 'package:frontend_flutter/models/natprod_dto.dart';
 
@@ -21,7 +22,7 @@ class ProductService {
       final data = response.data as List;
       return data.map((item) => NatProdDto.fromJson(item)).toList();
     } catch (e) {
-      throw Exception('Erro ao buscar produtos nacionais.');
+      throw Exception('Erro ao buscar produtos nacionais. $e');
     }
   }
 
@@ -31,23 +32,43 @@ class ProductService {
       final data = response.data as List;
       return data.map((item) => IntProdDto.fromJson(item)).toList();
     } catch (e) {
-      throw Exception('Erro ao buscar produtos internacionais.');
+      throw Exception('Erro ao buscar produtos internacionais. $e');
     }
   }
 
   Future<void> addNacional(NatProdDto produto) async {
     try {
-      await _dio.post('/product-nat/add-cart', data: produto.toJson());
+      await _dio.post(
+        '/product-nat/add-cart',
+        data: produto.toJson(),
+        options: Options(
+          headers: {'Content-Type': 'application/json'},
+        ),
+      );
     } catch (e) {
-      throw Exception('Erro ao adicionar produto nacional.');
+      if (e is DioException) {
+        debugPrint('Erro: ${e.response?.statusCode}');
+        debugPrint('Corpo do erro: ${e.response?.data}');
+      }
+      throw Exception('Erro ao adicionar produto nacional. $e');
     }
   }
 
   Future<void> addInternacional(IntProdDto produto) async {
     try {
-      await _dio.post('/product-int/add-cart', data: produto.toJson());
+      await _dio.post(
+        '/product-int/add-cart',
+        data: produto.toJson(),
+        options: Options(
+          headers: {'Content-Type': 'application/json'},
+        ),
+      );
     } catch (e) {
-      throw Exception('Erro ao adicionar produto internacional.');
+      if (e is DioException) {
+        debugPrint('Erro: ${e.response?.statusCode}');
+        debugPrint('Corpo do erro: ${e.response?.data}');
+      }
+      throw Exception('Erro ao adicionar produto nacional. $e');
     }
   }
 }
