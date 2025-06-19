@@ -69,9 +69,16 @@ class ProductItem extends StatelessWidget {
                       ),
                       Align(
                         alignment: Alignment.bottomRight,
-                        child: IconButton(
-                          onPressed: onAddCart,
-                          icon: const Icon(Icons.add_shopping_cart),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.blue, // Cor de fundo
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            color: Colors.white,
+                            onPressed: onAddCart,
+                            icon: const Icon(Icons.add_shopping_cart),
+                          ),
                         ),
                       ),
                     ],

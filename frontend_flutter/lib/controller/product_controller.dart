@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:frontend_flutter/models/intprod_dto.dart';
 import 'package:frontend_flutter/models/natprod_dto.dart';
 import 'package:frontend_flutter/services/product_service.dart';
@@ -10,6 +11,7 @@ class ProductController extends GetxController {
   var produtosInternacionais = <IntProdDto>[].obs;
   var produtosUnidos = <dynamic>[].obs;
   var cartProducts = <dynamic>[].obs;
+  var produtosComprados = <dynamic>[].obs;
   var isLoading = false.obs;
 
   @override
@@ -26,6 +28,7 @@ class ProductController extends GetxController {
       ...produtosNacionais,
       ...produtosInternacionais,
     ]);
+    await getProdutosComprados();
     isLoading.value = false;
   }
 
@@ -34,8 +37,13 @@ class ProductController extends GetxController {
       final data = await service.getNacionais();
       produtosNacionais.assignAll(data);
     } catch (e) {
-      Get.snackbar('Erro', 'Falha ao carregar produtos nacionais!',
-          snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Erro',
+        'Falha ao carregar produtos nacionais!',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withAlpha(180),
+        duration: Duration(seconds: 4),
+      );
     }
   }
 
@@ -44,8 +52,28 @@ class ProductController extends GetxController {
       final data = await service.getInternacionais();
       produtosInternacionais.assignAll(data);
     } catch (e) {
-      Get.snackbar('Erro', 'Falha ao carregar produtos internacionais!',
-          snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Erro',
+        'Falha ao carregar produtos internacionais!',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withAlpha(180),
+        duration: Duration(seconds: 4),
+      );
+    }
+  }
+
+  Future<void> getProdutosComprados() async {
+    try {
+      final data = await service.getProdutosComprados();
+      produtosComprados.assignAll(data);
+    } catch (e) {
+      Get.snackbar(
+        'Erro',
+        'Falha ao carregar os dados do banco!',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withAlpha(180),
+        duration: Duration(seconds: 4),
+      );
     }
   }
 
@@ -63,36 +91,24 @@ class ProductController extends GetxController {
       }
 
       Get.snackbar(
-        "Compra realizada",
-        "Produto adicionado com sucesso!",
+        "Sucesso",
+        "Produtos comprados com sucesso!",
         snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.greenAccent.withAlpha(180),
+        duration: Duration(seconds: 4),
       );
+
+      await getProdutosComprados();
     } catch (e) {
       Get.snackbar(
         "Erro ao comprar",
         "Não foi possível realizar a compra! $e",
         snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withAlpha(180),
+        duration: Duration(seconds: 4),
       );
     } finally {
       cartProducts.clear();
     }
   }
-
-/*   Future<void> adicionarNacional(NatProdDto produto) async {
-    try {
-      await service.addNacional(produto);
-    } catch (e) {
-      Get.snackbar('Erro', 'Não foi possível adicionar produto nacional!',
-          snackPosition: SnackPosition.BOTTOM);
-    }
-  }
-
-  Future<void> adicionarInternacional(IntProdDto produto) async {
-    try {
-      await service.addInternacional(produto);
-    } catch (e) {
-      Get.snackbar('Erro', 'Não foi possível adicionar produto internacional!',
-          snackPosition: SnackPosition.BOTTOM);
-    }
-  } */
 }

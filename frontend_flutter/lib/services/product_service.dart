@@ -36,6 +36,25 @@ class ProductService {
     }
   }
 
+  Future<List<dynamic>> getProdutosComprados() async {
+    try {
+      final nacionalResponse = await _dio.get('/product-nat/purchased-nat');
+      final internacionalResponse =
+          await _dio.get('/product-int/purchased-int');
+      final List<dynamic> nacional = nacionalResponse.data as List<dynamic>;
+      final List<dynamic> internacional =
+          internacionalResponse.data as List<dynamic>;
+      final List<dynamic> unificado = [...nacional, ...internacional];
+      return unificado;
+    } catch (e) {
+      if (e is DioException) {
+        debugPrint('Erro: ${e.response?.statusCode}');
+        debugPrint('Corpo do erro: ${e.response?.data}');
+      }
+      throw Exception('Erro ao buscar produtos comprados. $e');
+    }
+  }
+
   Future<void> addNacional(NatProdDto produto) async {
     try {
       await _dio.post(

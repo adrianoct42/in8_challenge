@@ -15,7 +15,7 @@ void main() async {
     getPages: [
       GetPage(name: "/products", page: () => const HomeScreen()),
       GetPage(name: "/cart", page: () => const CartScreen()),
-      GetPage(name: "/purchased", page: () => const PurchasedSceen())
+      GetPage(name: "/purchased", page: () => PurchasedSceen())
     ],
     theme: ThemeData(
       primarySwatch: Colors.lightBlue,

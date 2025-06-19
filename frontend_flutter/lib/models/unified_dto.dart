@@ -27,6 +27,17 @@ class UnifiedProductDto {
         nome: item.name,
         preco: item.price,
       );
+    } else if (item is Map<String, dynamic>) {
+      final campoPreco = item['preco'] ?? item['price'];
+      final campoConvertido = campoPreco is String
+          ? double.tryParse(campoPreco)
+          : (campoPreco is double ? campoPreco.toDouble() : 0);
+
+      return UnifiedProductDto(
+        imagem: item['imagem'] ?? item["gallery"][0],
+        nome: item['nome'] ?? item['name'],
+        preco: (campoConvertido ?? 0).toDouble(),
+      );
     } else {
       throw Exception("Tipo de produto desconhecido! ${item.runtimeType}");
     }

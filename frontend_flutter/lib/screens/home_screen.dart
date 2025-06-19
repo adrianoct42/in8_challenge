@@ -15,11 +15,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final productController = Get.put(ProductController());
   final selectedIndex = 0.obs; // 0 = Todos, 1 = Nacional, 2 = Internacional
+  final TextEditingController searchController = TextEditingController();
+  final RxString searchQuery = ''.obs;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.tealAccent,
         title: const Text('Products'),
       ),
       drawer: const AppDrawerWidget(),
@@ -37,42 +40,80 @@ class _HomeScreenState extends State<HomeScreen> {
                 ? productController.produtosNacionais
                 : productController.produtosInternacionais;
 
-        final produtosFiltrados =
+        // Unificação com um único tipo para visualização:
+        var produtosFiltrados =
             produtos.map((p) => UnifiedProductDto.fromAny(p)).toList();
+
+        // Filtro de busca, se algo for digitado:
+        if (searchQuery.value.trim().isNotEmpty) {
+          final query = searchQuery.value.trim().toLowerCase();
+          produtosFiltrados = produtosFiltrados
+              .where((p) => p.nome.toLowerCase().contains(query))
+              .toList();
+        }
 
         return Column(
           children: [
-            const SizedBox(height: 16),
-            const Text(
-              "Bem vindo à página dos Produtos",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+            SizedBox(
+              width: 350,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
+                child: TextField(
+                  controller: searchController,
+                  onChanged: (value) => searchQuery.value = value,
+                  decoration: InputDecoration(
+                    hintText: 'Buscar produtos...',
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(
+                        30,
+                      ),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        searchController.clear();
+                        searchQuery.value = '';
+                      },
+                    ),
+                  ),
+                ),
               ),
             ),
-            const SizedBox(height: 16),
             Obx(
-              () => ToggleButtons(
-                borderRadius: BorderRadius.circular(30),
-                color: Colors.black45,
-                selectedColor: Colors.white,
-                fillColor: Colors.blue[400],
-                isSelected:
-                    List.generate(3, (i) => selectedIndex.value == i), // WTF
-                onPressed: (index) => selectedIndex.value = index, // WTF2
-                constraints: const BoxConstraints(minHeight: 40, minWidth: 100),
-                children: const [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    child: Text('Todos'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    child: Text('Nacional'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    child: Text('Internacional'),
+              () => Column(
+                children: [
+                  ToggleButtons(
+                    borderRadius: BorderRadius.circular(30),
+                    color: Colors.black45,
+                    selectedColor: Colors.white,
+                    fillColor: Colors.blue[400],
+                    isSelected:
+                        List.generate(3, (i) => selectedIndex.value == i),
+                    onPressed: (index) => selectedIndex.value = index,
+                    constraints: const BoxConstraints(
+                      minHeight: 40,
+                      minWidth: 100,
+                    ),
+                    children: const [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Text('Todos'),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Text('Nacional'),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Text('Internacional'),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -86,12 +127,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   final product = produtosFiltrados[index];
                   final originalProduct = produtos[index];
                   return ProductItem(
-                    imagem: product.imagem,
-                    nome: product.nome,
-                    preco: product.preco,
-                    onAddCart: () =>
-                        productController.cartProducts.add(originalProduct),
-                  );
+                      imagem: product.imagem,
+                      nome: product.nome,
+                      preco: product.preco,
+                      onAddCart: () => {
+                            productController.cartProducts.add(originalProduct),
+                            Get.snackbar(
+                              "Sucesso",
+                              "Item adicionado ao carrinho!",
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor:
+                                  Colors.greenAccent.withAlpha(180),
+                              animationDuration: Duration(
+                                seconds: 4,
+                              ),
+                            ),
+                          });
                 },
               ),
             ),
